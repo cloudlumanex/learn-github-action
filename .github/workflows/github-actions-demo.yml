@@ -39,35 +39,42 @@ jobs:
             sudo systemctl status nginx
             sudo systemctl status nginx --no-page
 
-      - name: Deploy Nginx index.html
+      - name: Copy index.html to server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          port: 22
+          source: "index.html"
+          target: "/tmp/"
+          
+      - name: Replace default nginx page
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.SERVER_IP }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
           port: 22
-          source: "index.html"                
-          target: "/var/www/html/"           
           script: |
-            sudo apt update
-            sudo apt install -y nginx
-            sudo systemctl enable --now nginx
+            sudo rm -f /var/www/html/index.nginx-debian.html
+            sudo mv /tmp/index.html /var/www/html/index.html
             sudo chown www-data:www-data /var/www/html/index.html
             sudo chmod 644 /var/www/html/index.html
             sudo systemctl restart nginx
-
+            
       - name: Verify deployment
         uses: appleboy/ssh-action@v1.0.3
         with:
-          host: ${{ env.SERVER_IP }}
-          username: ${{ env.SSH_USER }}
-          key: ${{ env.SSH_KEY }}
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
           port: 22
           script: |
+            echo "Files in /var/www/html/:"
             ls -l /var/www/html/
+            echo -e "\nContent of index.html:"
             cat /var/www/html/index.html
-
-
 
 
 
