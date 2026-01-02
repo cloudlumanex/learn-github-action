@@ -39,8 +39,20 @@ jobs:
             sudo systemctl status nginx
             sudo systemctl status nginx --no-pager
             sudo cp $GITHUB_WORKSPACE/index.html /var/www/html/index.html
+
+      - name: Deploy index.html to Nginx
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          port: 22
+          source: "index.html"
+          target: "/var/www/html/"
+          script: |
             sudo chown www-data:www-data /var/www/html/index.html
             sudo systemctl restart nginx
+
 
 
 
