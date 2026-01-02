@@ -1,1 +1,11 @@
+name: login to aws and install nginx
 
+on: ubuntu-latest
+
+env:
+  SERVER_IP: 
+  SSH_USER:
+  SSH_KEY:
+
+jobs:
+  
