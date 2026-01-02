@@ -7,9 +7,39 @@ on:
     branches: main
 
 env:
-  SERVER_IP: 
-  SSH_USER:
-  SSH_KEY:
+  SERVER_IP: ${{ secrets.SERVER_IP }}
+  SSH_USER: ${{ secrets.SSH_USER }}
+  SSH_KEY: ${{ secrets.SSH_KEY }}
 
 jobs:
+  deploy-nginx:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout code
+        uses: action/checkout@v4
+
+      - name: setup SSH
+        uses: webfactory/ssh-agent@v0.8.1
+        with:
+          ssh-private-key: ${{ secrets.SSH_KEY }}
+             
+
+      - name: Deploy Nginx on Ubuntu server
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          hosts: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SSH_USER }}
+          port: 22
+          script: |
+            sudo apt update
+            sudo apt install -y nginx
+            sudo systemctl enable --now nginx
+            sudo systemctl status nginx
+            
+          
+          
+
+        
+
   
