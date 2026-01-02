@@ -52,6 +52,17 @@ jobs:
             sudo chown www-data:www-data /var/www/html/index.html
             sudo systemctl restart nginx
 
+      - name: Verify deployment
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ env.SERVER_IP }}
+          username: ${{ env.SSH_USER }}
+          key: ${{ env.SSH_KEY }}
+          port: 22
+          script: |
+            ls -l /var/www/html/
+            cat /var/www/html/index.html
+
 
 
 
