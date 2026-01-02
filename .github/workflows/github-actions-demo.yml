@@ -37,8 +37,7 @@ jobs:
             sudo apt install -y nginx
             sudo systemctl enable --now nginx
             sudo systemctl status nginx
-            sudo systemctl status nginx --no-pager
-            sudo cp $GITHUB_WORKSPACE/index.html /var/www/html/index.html
+            sudo systemctl status nginx --no-page
 
       - name: Deploy index.html to Nginx
         uses: appleboy/ssh-action@v1.0.3
